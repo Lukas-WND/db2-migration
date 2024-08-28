@@ -1,4 +1,3 @@
-"use client";
 import {
   Card,
   CardContent,
@@ -9,26 +8,28 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { useState } from "react";
 import { api } from "@/api/api";
+import { Connection } from "@/interfaces/connection";
 
-export function ConnectionCard({ db }: { db: string }) {
-  const [host, setHost] = useState("");
-  const [port, setPort] = useState("");
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
-  const [schema, setSchema] = useState("");
-
+export function ConnectionCard({
+  db,
+  connData,
+  dispatchers,
+}: {
+  db: string;
+  connData: Connection;
+  dispatchers: React.Dispatch<React.SetStateAction<string>>[];
+}) {
   async function testConnection(event: React.FormEvent) {
     event.preventDefault();
     const dbName = db.toLowerCase();
     const route = `/test-${dbName}-connection`;
     const data = {
-      [`${dbName}-host`]: host,
-      [`${dbName}-port`]: port,
-      [`${dbName}-user`]: user,
-      [`${dbName}-password`]: password,
-      [`${dbName}-database`]: schema,
+      [`${dbName}-host`]: connData.host,
+      [`${dbName}-port`]: connData.port,
+      [`${dbName}-user`]: connData.user,
+      [`${dbName}-password`]: connData.password,
+      [`${dbName}-database`]: connData.schema,
     };
 
     api.post(route, data);
@@ -50,8 +51,8 @@ export function ConnectionCard({ db }: { db: string }) {
               <Input
                 placeholder="127.0.0.1..."
                 className="mt-2"
-                value={host}
-                onChange={(e) => setHost(e.target.value)}
+                value={connData.host}
+                onChange={(e) => dispatchers[0](e.target.value)}
               />
             </Label>
 
@@ -60,8 +61,8 @@ export function ConnectionCard({ db }: { db: string }) {
               <Input
                 placeholder="3306..."
                 className="mt-2"
-                value={port}
-                onChange={(e) => setPort(e.target.value)}
+                value={connData.port}
+                onChange={(e) => dispatchers[1](e.target.value)}
               />
             </Label>
 
@@ -70,8 +71,8 @@ export function ConnectionCard({ db }: { db: string }) {
               <Input
                 placeholder="username..."
                 className="mt-2"
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
+                value={connData.user}
+                onChange={(e) => dispatchers[2](e.target.value)}
               />
             </Label>
 
@@ -81,8 +82,8 @@ export function ConnectionCard({ db }: { db: string }) {
                 placeholder="password..."
                 className="mt-2"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={connData.password}
+                onChange={(e) => dispatchers[3](e.target.value)}
               />
             </Label>
 
@@ -91,8 +92,8 @@ export function ConnectionCard({ db }: { db: string }) {
               <Input
                 placeholder="db-name..."
                 className="mt-2"
-                value={schema}
-                onChange={(e) => setSchema(e.target.value)}
+                value={connData.schema}
+                onChange={(e) => dispatchers[4](e.target.value)}
               />
             </Label>
           </div>

@@ -30,9 +30,13 @@ export default function RootLayout({
         )}
       >
         <header className="pt-4">
-          <h1 className="mt-2 text-3xl text-center">Migração de Banco de Dados</h1>
+          <h1 className="mt-2 text-3xl text-center">
+            Migração de Banco de Dados
+          </h1>
         </header>
-        {children}
+        <main className="flex h-full flex-col items-center p-24">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

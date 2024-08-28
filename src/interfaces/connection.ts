@@ -3,5 +3,5 @@ export interface Connection {
   port: string;
   user: string;
   password: string;
-  sgbd: string;
+  schema: string;
 }
