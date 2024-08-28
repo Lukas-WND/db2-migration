@@ -1,8 +1,15 @@
+import { Toaster } from "@/components/ui/toaster";
+import "./globals.css";
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const fontSans = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +22,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="pt-br">
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <header className="pt-4">
+          <h1 className="mt-2 text-3xl text-center">Migração de Banco de Dados</h1>
+        </header>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

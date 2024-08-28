@@ -1,0 +1,1 @@
+export const API_URL = "https://db2-to-mariadb.onrender.com";
