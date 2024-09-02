@@ -17,11 +17,11 @@ import {
 } from "../ui/select";
 
 export function ConnectionCard({
-  db,
+  title,
   connData,
   dispatcher,
 }: {
-  db: string;
+  title: string;
   connData: Connection;
   dispatcher: {
     method: (index: number, field: keyof Connection, value: string) => void;
@@ -31,7 +31,7 @@ export function ConnectionCard({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Conexão {db}</CardTitle>
+        <CardTitle>Conexão {title}</CardTitle>
         <CardDescription>
           Insira os dados para realizar a conexão
         </CardDescription>
@@ -47,6 +47,7 @@ export function ConnectionCard({
               onChange={(e) =>
                 dispatcher.method(dispatcher.index, "host", e.target.value)
               }
+              autoComplete="additional-name"
             />
           </Label>
 

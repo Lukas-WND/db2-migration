@@ -1,7 +1,9 @@
-import { SchemaTables } from "@/components/general/SchemaTables";
+import { SchemaTables } from "@/components/general/SchemaManager";
 
 export default function SchemaTablesPage() {
-  return <>
-    <SchemaTables />
-  </>;
+  return (
+    <div className="w-full p-10">
+      <SchemaTables />
+    </div>
+  );
 }

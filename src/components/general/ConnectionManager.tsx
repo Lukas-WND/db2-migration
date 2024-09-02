@@ -1,8 +1,10 @@
 "use client";
 
 import { api } from "@/api/api";
-import { Button } from "../ui/button";
+import { useState } from "react";
 import { useToast } from "../ui/use-toast";
+
+import { Button } from "../ui/button";
 import { ConnectionCard } from "./ConnectionCard";
 import { useConnectionsStore } from "@/stores/ConnectionStore";
 
@@ -20,6 +22,7 @@ export function ConnectionManager() {
   }));
 
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   async function ConnectDatabases(event: React.FormEvent) {
     event.preventDefault();
@@ -33,6 +36,12 @@ export function ConnectionManager() {
       });
       return;
     }
+
+    setLoading(true);
+    const loadingToast = toast({
+      title: "Conectando...",
+      description: "Aguarde enquanto as conexões são testadas.",
+    });
 
     try {
       const [db2, mariadb] = await Promise.all([
@@ -51,6 +60,8 @@ export function ConnectionManager() {
           [`${connections[1].sgbd}-database`]: connections[1].schema,
         }),
       ]);
+      setLoading(false);
+      loadingToast.dismiss();
 
       if (db2.status === 200 && mariadb.status === 200) {
         toast({
@@ -61,6 +72,8 @@ export function ConnectionManager() {
         window.location.href = "/migrate";
       }
     } catch (error) {
+      setLoading(false);
+      loadingToast.dismiss();
       console.error("Erro ao testar conexões:", error);
       toast({
         variant: "destructive",
@@ -71,10 +84,10 @@ export function ConnectionManager() {
   }
 
   return (
-    <div className="w-full px-10">
+    <div className="w-full ">
       <div className="flex flex-col gap-12 justify-between items-center">
         <ConnectionCard
-          db={"Fonte"}
+          title={"Fonte"}
           connData={connections[0]}
           dispatcher={{ method: updateConnection, index: 0 }}
         />
@@ -94,12 +107,12 @@ export function ConnectionManager() {
           <path d="M12 2V22" />
         </svg>
         <ConnectionCard
-          db={"Destino"}
+          title={"Destino"}
           connData={connections[1]}
           dispatcher={{ method: updateConnection, index: 1 }}
         />
       </div>
-      <div className="mt-24">
+      <div className="mt-16">
         <form
           onSubmit={ConnectDatabases}
           className="w-full flex gap-2 items-center justify-center"
@@ -113,7 +126,7 @@ export function ConnectionManager() {
             Limpar
           </Button>
           <Button
-            className="w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-md"
+            className="w-full bg-emerald-600 hover:bg-emerald-800 text-white rounded-md"
             type="submit"
             disabled={!areConnectionsValid()}
           >

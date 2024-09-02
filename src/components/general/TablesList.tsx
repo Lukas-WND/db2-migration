@@ -1,12 +1,7 @@
 import { api } from "@/api/api";
 import { useEffect, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
-
-interface Table {
-  table: string;
-  references: { REFTABNAME: string }[];
-  referencieds: { TABNAME: string }[];
-}
+import { Table } from "@/stores/TablesStore";
 
 export function TablesList({
   schema,
