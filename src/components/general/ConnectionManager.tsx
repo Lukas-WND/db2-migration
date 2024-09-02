@@ -1,45 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ConnectionCard } from "./ConnectionCard";
-import { Button } from "../ui/button";
 import { api } from "@/api/api";
-import { useRouter } from "next/router";
+import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
+import { ConnectionCard } from "./ConnectionCard";
+import { useConnectionsStore } from "@/stores/ConnectionStore";
 
 export function ConnectionManager() {
-  const [host1, setHost1] = useState("");
-  const [port1, setPort1] = useState("");
-  const [user1, setUser1] = useState("");
-  const [password1, setPassword1] = useState("");
-  const [schema1, setSchema1] = useState("");
-
-  const [host2, setHost2] = useState("");
-  const [port2, setPort2] = useState("");
-  const [user2, setUser2] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [schema2, setSchema2] = useState("");
+  const {
+    connections,
+    updateConnection,
+    clearConnections,
+    areConnectionsValid,
+  } = useConnectionsStore((state) => ({
+    connections: state.connections,
+    updateConnection: state.updateConnection,
+    clearConnections: state.clearConnections,
+    areConnectionsValid: state.areConnectionsValid,
+  }));
 
   const { toast } = useToast();
 
   async function ConnectDatabases(event: React.FormEvent) {
     event.preventDefault();
 
+    if (!areConnectionsValid()) {
+      toast({
+        variant: "destructive",
+        title: "Erro!",
+        description:
+          "Preencha todas as conexões obrigatórias antes de prosseguir.",
+      });
+      return;
+    }
+
     try {
       const [db2, mariadb] = await Promise.all([
-        api.post("/test-db2-connection", {
-          [`db2-host`]: host1,
-          [`db2-port`]: port1,
-          [`db2-user`]: user1,
-          [`db2-password`]: password1,
-          [`db2-database`]: schema1,
+        api.post(`test-${connections[0].sgbd}-connection`, {
+          [`${connections[0].sgbd}-host`]: connections[0].host,
+          [`${connections[0].sgbd}-port`]: connections[0].port,
+          [`${connections[0].sgbd}-user`]: connections[0].user,
+          [`${connections[0].sgbd}-password`]: connections[0].password,
+          [`${connections[0].sgbd}-database`]: connections[0].schema,
         }),
-        api.post("/test-mariadb-connection", {
-          [`mariadb-host`]: host2,
-          [`mariadb-port`]: port2,
-          [`mariadb-user`]: user2,
-          [`mariadb-password`]: password2,
-          [`mariadb-database`]: schema2,
+        api.post(`test-${connections[1].sgbd}-connection`, {
+          [`${connections[1].sgbd}-host`]: connections[1].host,
+          [`${connections[1].sgbd}-port`]: connections[1].port,
+          [`${connections[1].sgbd}-user`]: connections[1].user,
+          [`${connections[1].sgbd}-password`]: connections[1].password,
+          [`${connections[1].sgbd}-database`]: connections[1].schema,
         }),
       ]);
 
@@ -56,46 +65,62 @@ export function ConnectionManager() {
       toast({
         variant: "destructive",
         title: "Erro ao realizar conexão!",
+        description: "Verifique as configurações e tente novamente.",
       });
     }
   }
 
   return (
-    <>
-      <div className="grid grid-cols-2 gap-x-48">
+    <div className="w-full px-10">
+      <div className="flex flex-col gap-12 justify-between items-center">
         <ConnectionCard
-          db={"DB2"}
-          connData={{
-            host: host1,
-            port: port1,
-            user: user1,
-            password: password1,
-            schema: schema1,
-          }}
-          dispatchers={[setHost1, setPort1, setUser1, setPassword1, setSchema1]}
+          db={"Fonte"}
+          connData={connections[0]}
+          dispatcher={{ method: updateConnection, index: 0 }}
         />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="lucide lucide-move-down"
+        >
+          <path d="M8 18L12 22L16 18" />
+          <path d="M12 2V22" />
+        </svg>
         <ConnectionCard
-          db={"MariaDB"}
-          connData={{
-            host: host2,
-            port: port2,
-            user: user2,
-            password: password2,
-            schema: schema2,
-          }}
-          dispatchers={[setHost2, setPort2, setUser2, setPassword2, setSchema2]}
+          db={"Destino"}
+          connData={connections[1]}
+          dispatcher={{ method: updateConnection, index: 1 }}
         />
       </div>
       <div className="mt-24">
-        <form onSubmit={ConnectDatabases}>
+        <form
+          onSubmit={ConnectDatabases}
+          className="w-full flex gap-2 items-center justify-center"
+        >
           <Button
-            className="py-2 px-24 text-xl bg-emerald-700 text-white rounded-md"
+            type="button"
+            variant="secondary"
+            onClick={() => clearConnections()}
+            className="w-full"
+          >
+            Limpar
+          </Button>
+          <Button
+            className="w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-md"
             type="submit"
+            disabled={!areConnectionsValid()}
           >
             Iniciar Migração
           </Button>
         </form>
       </div>
-    </>
+    </div>
   );
 }

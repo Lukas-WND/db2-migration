@@ -16,19 +16,18 @@ export function SchemaList({
       <div className="p-2">
         <p className="mb-4">Lista de Esquemas</p>
         {list.map((item, idx) => (
-          <>
+          <div key={idx}>
             <Button
               variant="ghost"
-              key={idx}
               className={`w-full ${
-                item === schema && "bg-emerald-700 text-white"
+                item === schema && "bg-emerald-700 hover:bg-emerald-800 text-white hover:text-white"
               }`}
               onClick={() => setSchema(item)}
             >
               {item}
             </Button>
             <Separator className="mt-1"/>
-          </>
+          </div>
         ))}
       </div>
     </ScrollArea>
