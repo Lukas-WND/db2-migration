@@ -164,9 +164,9 @@ export function SchemaTables() {
       setLoadingRequest(true);
       const response = await api.post("/migrate", data);
 
-      // if (response.status === 200) {
-      //   window.location.href = "/success";
-      // }
+      if (response.status === 200) {
+        window.location.href = "/success";
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -188,9 +188,9 @@ export function SchemaTables() {
       setLoadingRequest(true);
       const response = await api.post("/migrate", data);
 
-      // if (response.status === 200) {
-      //   window.location.href = "/success";
-      // }
+      if (response.status === 200) {
+        window.location.href = "/success";
+      }
     } catch (err) {
       console.error(err);
     } finally {
