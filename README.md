@@ -2,9 +2,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, clone repository and run the development server:
 
 ```bash
+git clone https://github.com/Lukas-WND/db2-migration
+
+cd db2 db2-migration
+
+npm install
+
 npm run dev
 # or
 yarn dev
